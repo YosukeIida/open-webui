@@ -1,0 +1,8 @@
+tunnel: 31f206e5-bc05-40de-a0fc-4ddf11eaf1f8
+credentials-file: /home/nonroot/.cloudflared/31f206e5-bc05-40de-a0fc-4ddf11eaf1f8.json
+protocol: http2
+
+ingress:
+  - hostname: i2-webui.iodine2.net
+    service: http://open-webui:8080
+  - service: http_status:404
