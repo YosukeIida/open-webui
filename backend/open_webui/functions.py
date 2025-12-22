@@ -81,6 +81,7 @@ def get_function_module_by_id(request: Request, pipe_id: str):
 async def get_function_models(request):
     pipes = Functions.get_functions_by_type("pipe", active_only=True)
     pipe_models = []
+    default_filter_ids = ["provider_web_search_router"]
 
     for pipe in pipes:
         try:
@@ -129,6 +130,7 @@ async def get_function_models(request):
                             "owned_by": "openai",
                             "pipe": pipe_flag,
                             "has_user_valves": has_user_valves,
+                            "info": {"meta": {"defaultFilterIds": default_filter_ids}},
                         }
                     )
             else:
@@ -147,6 +149,7 @@ async def get_function_models(request):
                         "owned_by": "openai",
                         "pipe": pipe_flag,
                         "has_user_valves": has_user_valves,
+                        "info": {"meta": {"defaultFilterIds": default_filter_ids}},
                     }
                 )
         except Exception as e:

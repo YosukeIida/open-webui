@@ -937,6 +937,22 @@ async def chat_completion_files_handler(
     sources = []
 
     if files := body.get("metadata", {}).get("files", None):
+        # Visual-only: provider側のPDF/画像入力を使う Pipe では、RAG（抽出テキスト差し込み）を抑止する.
+        # 背景: スキャンPDF（テキスト0）でも upstream の vision 経路でOCRできるため、二重投入は不要。
+        model_id = body.get("model", "")
+        if isinstance(model_id, str) and "." in model_id:
+            pipe_id = model_id.split(".", 1)[0]
+            if pipe_id in (
+                "openai_responses",
+                "anthropic_messages",
+                "gemini_generatecontent",
+            ):
+                has_any_file = any(
+                    isinstance(item, dict) and item.get("type") == "file" for item in files
+                )
+                if has_any_file:
+                    return body, {"sources": []}
+
         # Check if all files are in full context mode
         all_full_context = all(item.get("context") == "full" for item in files)
 

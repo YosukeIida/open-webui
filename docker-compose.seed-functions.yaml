@@ -1,0 +1,20 @@
+services:
+  seed-functions:
+    # `open-webui` をフルビルドしている場合は `WEBUI_SEED_IMAGE=open-webui:local` を指定すると
+    # seed 側も同じイメージで実行できる.
+    image: ${WEBUI_SEED_IMAGE-ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}}
+    depends_on:
+      - open-webui
+    env_file:
+      - api_key.env
+    environment:
+      - WEBUI_URL=http://open-webui:8080
+      - FUNCTIONS_DIR=/seed/webui_functions
+      - FUNCTIONS_SRC_DIR=/seed/webui_functions_src
+    volumes:
+      - ./webui_functions:/seed/webui_functions:ro
+      - ./webui_functions_src:/seed/webui_functions_src:ro
+      - ./scripts/bundle-function.py:/seed/bundle-function.py:ro
+      - ./scripts/seed-functions.sh:/seed/seed-functions.sh:ro
+    entrypoint: ["bash", "/seed/seed-functions.sh"]
+    restart: "no"
