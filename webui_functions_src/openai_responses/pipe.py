@@ -660,9 +660,7 @@ class Pipe:
                                 continue
 
                             if provider_web_search:
-                                for call_item in _extract_web_search_call_items_from_event(
-                                    event
-                                ):
+                                for call_item in _extract_web_search_call_items_from_event(event):
                                     web_search_used = True
                                     urls, items, non_url_sources = (
                                         _web_search_sources_from_call_item(call_item)
@@ -694,12 +692,10 @@ class Pipe:
 
                                     if not is_background_task:
                                         if items:
-                                            await (
-                                                _emit_search_result_citations_from_source_items(
-                                                    __event_emitter__,
-                                                    items=items,
-                                                    seen_urls=seen_search_result_urls,
-                                                )
+                                            await _emit_search_result_citations_from_source_items(
+                                                __event_emitter__,
+                                                items=items,
+                                                seen_urls=seen_search_result_urls,
                                             )
                                         if non_url_sources:
                                             await _emit_search_result_info_sources(
@@ -774,7 +770,9 @@ class Pipe:
                         if (
                             not retried_without_files
                             and isinstance(stream_request, dict)
-                            and _should_retry_without_input_types(exc, type_name="input_file")
+                            and _should_retry_without_input_types(
+                                exc, type_name="input_file"
+                            )
                         ):
                             retried_without_files = True
                             stream_request = _strip_responses_input_content_types(
@@ -795,7 +793,9 @@ class Pipe:
                         if (
                             not retried_without_images
                             and isinstance(stream_request, dict)
-                            and _should_retry_without_input_types(exc, type_name="input_image")
+                            and _should_retry_without_input_types(
+                                exc, type_name="input_image"
+                            )
                         ):
                             retried_without_images = True
                             stream_request = _strip_responses_input_content_types(
@@ -828,8 +828,8 @@ class Pipe:
                                 "request": stream_request,
                             },
                             max_string_length=valves.debug_max_string_length,
-                                max_depth=valves.debug_max_depth,
-                            )
+                            max_depth=valves.debug_max_depth,
+                        )
                 if (retried_without_files or retried_without_images) and (
                     valves.debug_enabled and valves.debug_include_request
                 ):

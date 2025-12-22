@@ -3,6 +3,7 @@ from typing import Any
 
 from webui_functions_src.openai_responses.emit import _to_plain
 
+
 def _response_output_items(resp: Any) -> list[dict[str, Any]]:
     plain = _to_plain(resp)
     if isinstance(plain, dict):

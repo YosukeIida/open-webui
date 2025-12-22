@@ -582,7 +582,10 @@ class Pipe:
                         if parsed is None:
                             # URL fetch は環境依存・壊れやすいので, ここではテキスト化する.
                             blocks.append(
-                                {"type": "text", "text": f"[image omitted: {url.strip()}]"}
+                                {
+                                    "type": "text",
+                                    "text": f"[image omitted: {url.strip()}]",
+                                }
                             )
                             continue
                         mime, encoded = parsed
@@ -1014,7 +1017,7 @@ class Pipe:
                     )
 
         async def _iter_events_via_async_sdk(
-            call_request: dict[str, Any]
+            call_request: dict[str, Any],
         ) -> AsyncGenerator[Any, None]:
             if async_client is None:
                 raise RuntimeError("AsyncAnthropic client is not available.")
@@ -1109,12 +1112,7 @@ class Pipe:
                 async def handle_event(
                     event: Any,
                 ) -> AsyncGenerator[Any, None]:
-                    nonlocal \
-                        url_tail, \
-                        web_search_started, \
-                        stop_reason, \
-                        text_tail, \
-                        reasoning_tail
+                    nonlocal url_tail, web_search_started, stop_reason, text_tail, reasoning_tail
 
                     event_type = getattr(event, "type", None) or (
                         event.get("type") if isinstance(event, dict) else None
@@ -1445,17 +1443,20 @@ class Pipe:
                                 "action": "web_search",
                                 "description": f"Web search tool error: {', '.join(web_search_error_codes)}",
                                 "urls": urls,
-                                "items": [
-                                    {
-                                        "link": i.get("url", ""),
-                                        "title": i.get("title", ""),
-                                        "snippet": i.get("snippet", ""),
-                                    }
-                                    for i in provider_items
-                                    if isinstance(i.get("url"), str) and i.get("url")
-                                ]
-                                if provider_items
-                                else [{"link": url} for url in urls],
+                                "items": (
+                                    [
+                                        {
+                                            "link": i.get("url", ""),
+                                            "title": i.get("title", ""),
+                                            "snippet": i.get("snippet", ""),
+                                        }
+                                        for i in provider_items
+                                        if isinstance(i.get("url"), str)
+                                        and i.get("url")
+                                    ]
+                                    if provider_items
+                                    else [{"link": url} for url in urls]
+                                ),
                                 "done": True,
                                 "error": True,
                             },
@@ -1518,14 +1519,16 @@ class Pipe:
                                 },
                             )
 
-                    if not is_background_task and not web_search_used:
-                        await _emit_unverified_citations_from_text(
-                            __event_emitter__,
-                            text="".join(full_text_parts)
+                if not is_background_task and not web_search_used:
+                    await _emit_unverified_citations_from_text(
+                        __event_emitter__,
+                        text=(
+                            "".join(full_text_parts)
                             if full_text_parts is not None
-                            else text_tail,
-                            seen_urls=seen_urls,
-                        )
+                            else text_tail
+                        ),
+                        seen_urls=seen_urls,
+                    )
 
                 if stop_reason in ("pause_turn", "refusal") and not is_background_task:
                     await _emit_status(
@@ -1545,12 +1548,16 @@ class Pipe:
                         provider="anthropic",
                         title="response",
                         parameters={
-                            "text": "".join(full_text_parts)
-                            if full_text_parts is not None
-                            else text_tail,
-                            "reasoning": "".join(full_reasoning_parts)
-                            if full_reasoning_parts is not None
-                            else reasoning_tail,
+                            "text": (
+                                "".join(full_text_parts)
+                                if full_text_parts is not None
+                                else text_tail
+                            ),
+                            "reasoning": (
+                                "".join(full_reasoning_parts)
+                                if full_reasoning_parts is not None
+                                else reasoning_tail
+                            ),
                             "web_search_items": list(provider_items_by_url.values()),
                         },
                         max_string_length=valves.debug_max_string_length,
@@ -1558,12 +1565,16 @@ class Pipe:
                     )
 
                 stream_result = {
-                    "content": "".join(full_text_parts)
-                    if full_text_parts is not None
-                    else text_tail,
-                    "reasoning": "".join(full_reasoning_parts)
-                    if full_reasoning_parts is not None
-                    else reasoning_tail,
+                    "content": (
+                        "".join(full_text_parts)
+                        if full_text_parts is not None
+                        else text_tail
+                    ),
+                    "reasoning": (
+                        "".join(full_reasoning_parts)
+                        if full_reasoning_parts is not None
+                        else reasoning_tail
+                    ),
                 }
 
                 yield openai_chat_chunk_message_template(model_id)
@@ -1610,7 +1621,9 @@ class Pipe:
                 else:
                     try:
                         if async_client is None:
-                            raise RuntimeError("AsyncAnthropic client is not available.")
+                            raise RuntimeError(
+                                "AsyncAnthropic client is not available."
+                            )
                         message = await async_client.messages.create(**create_request)
                     except TypeError as exc:
                         if not _looks_like_unexpected_kwarg_error(exc):
@@ -1814,9 +1827,11 @@ class Pipe:
                         "action": "web_search",
                         "description": "Searched {{count}} sites",
                         "urls": urls,
-                        "items": status_items
-                        if status_items
-                        else [{"link": url} for url in urls],
+                        "items": (
+                            status_items
+                            if status_items
+                            else [{"link": url} for url in urls]
+                        ),
                         "done": True,
                     },
                 )

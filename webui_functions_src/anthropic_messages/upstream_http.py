@@ -58,7 +58,9 @@ def _anthropic_headers(
     return headers
 
 
-def _anthropic_files_headers(*, api_key: str, beta_headers: list[str]) -> dict[str, str]:
+def _anthropic_files_headers(
+    *, api_key: str, beta_headers: list[str]
+) -> dict[str, str]:
     """
     Files API 用の headers（multipart/form-data なので content-type は付けない）.
     """

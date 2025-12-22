@@ -2,6 +2,7 @@
 import re
 from dataclasses import dataclass
 
+
 @dataclass(frozen=True)
 class _ModelFilter:
     allow: re.Pattern[str] | None

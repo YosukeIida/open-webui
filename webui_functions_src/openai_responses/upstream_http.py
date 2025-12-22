@@ -7,6 +7,7 @@ from typing import Any
 import httpx
 from httpx import Timeout
 
+
 def _httpx_timeout(*, stream: bool) -> Timeout:
     """
     タイムアウトは Valve に出さず固定する.

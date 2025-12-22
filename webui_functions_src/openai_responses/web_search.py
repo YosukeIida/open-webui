@@ -3,6 +3,7 @@ from typing import Any
 
 from webui_functions_src.openai_responses.upstream_parse import _response_output_items
 
+
 def _collect_web_search_activity(
     resp: Any,
 ) -> tuple[bool, list[str], list[dict[str, str]], list[str]]:

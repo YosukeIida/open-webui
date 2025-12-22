@@ -948,9 +948,7 @@ async def chat_completion_files_handler(
                 "gemini_generatecontent",
             ):
                 has_any_file = any(
-                    isinstance(item, dict)
-                    and item.get("type") == "file"
-                    for item in files
+                    isinstance(item, dict) and item.get("type") == "file" for item in files
                 )
                 if has_any_file:
                     return body, {"sources": []}

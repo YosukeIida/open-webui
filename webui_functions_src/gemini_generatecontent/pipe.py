@@ -612,11 +612,18 @@ class Pipe:
                     if isinstance(part, dict) and part.get("type") == "image_url":
                         image_url = part.get("image_url")
                         url = (
-                            (image_url.get("url") if isinstance(image_url, dict) else image_url)
+                            (
+                                image_url.get("url")
+                                if isinstance(image_url, dict)
+                                else image_url
+                            )
                             if isinstance(image_url, (dict, str))
                             else None
                         )
-                        if isinstance(url, str) and _parse_base64_data_url(url.strip()) is not None:
+                        if (
+                            isinstance(url, str)
+                            and _parse_base64_data_url(url.strip()) is not None
+                        ):
                             use_multimodal = True
                             break
                 if use_multimodal:
@@ -716,9 +723,13 @@ class Pipe:
                 if use_multimodal and contents_camel_file is not None:
                     stream_sources.append(("contents_camel_file", contents_camel_file))
                 if use_multimodal and contents_snake_inline is not None:
-                    stream_sources.append(("contents_snake_inline", contents_snake_inline))
+                    stream_sources.append(
+                        ("contents_snake_inline", contents_snake_inline)
+                    )
                 if use_multimodal and contents_camel_inline is not None:
-                    stream_sources.append(("contents_camel_inline", contents_camel_inline))
+                    stream_sources.append(
+                        ("contents_camel_inline", contents_camel_inline)
+                    )
                 stream_sources.append(("prompt", prompt))
 
                 last_err: Exception | None = None
@@ -780,7 +791,10 @@ class Pipe:
                                 else:
                                     full_text_parts.append(text)
                                     url_tail = (url_tail + text)[-2000:]
-                                    if not is_background_task and not provider_web_search:
+                                    if (
+                                        not is_background_task
+                                        and not provider_web_search
+                                    ):
                                         await _emit_unverified_citations_from_text(
                                             __event_emitter__,
                                             text=url_tail,

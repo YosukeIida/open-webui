@@ -1,6 +1,7 @@
 # NOTE: このファイルは `bundle.txt` に従って 1 つの Function code に結合されます.
 from typing import Any
 
+
 def _looks_like_background_task_prompt(text: str) -> bool:
     stripped = (text or "").strip()
     if not stripped:
@@ -143,7 +144,10 @@ def _to_responses_input(messages: list[dict[str, Any]]) -> list[dict[str, Any]]:
             else:
                 items.append({"type": "input_text", "text": str(content)})
             converted.append(
-                {"role": "user", "content": items or [{"type": "input_text", "text": ""}]}
+                {
+                    "role": "user",
+                    "content": items or [{"type": "input_text", "text": ""}],
+                }
             )
         elif role == "assistant":
             if isinstance(content, list):

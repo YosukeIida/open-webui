@@ -16,7 +16,9 @@ from pathlib import Path
 
 def _trim_and_unquote(value: str) -> str:
     value = value.strip()
-    if len(value) >= 2 and ((value[0] == value[-1] == "'") or (value[0] == value[-1] == '"')):
+    if len(value) >= 2 and (
+        (value[0] == value[-1] == "'") or (value[0] == value[-1] == '"')
+    ):
         return value[1:-1]
     return value
 
@@ -58,7 +60,9 @@ def _strip_internal_imports(
         re.compile(rf"^from\s+webui_functions_src\.{re.escape(function_id)}(\.|\s)"),
     ]
     internal_import_patterns = [
-        re.compile(rf"^import\s+webui_functions_src\.{re.escape(function_id)}(\.|\s|$)"),
+        re.compile(
+            rf"^import\s+webui_functions_src\.{re.escape(function_id)}(\.|\s|$)"
+        ),
     ]
 
     out_lines: list[str] = []
@@ -86,9 +90,13 @@ def _strip_internal_imports(
 
         is_internal = False
         if stripped.startswith("from "):
-            is_internal = any(p.search(stripped) is not None for p in internal_from_patterns)
+            is_internal = any(
+                p.search(stripped) is not None for p in internal_from_patterns
+            )
         elif stripped.startswith("import "):
-            is_internal = any(p.search(stripped) is not None for p in internal_import_patterns)
+            is_internal = any(
+                p.search(stripped) is not None for p in internal_import_patterns
+            )
 
         if not is_internal:
             out_lines.append(line)
@@ -125,11 +133,15 @@ def bundle_function(*, src_dir: Path, function_id: str, out_file: Path) -> None:
 
     for part in parts:
         if not part.exists():
-            raise SystemExit(f"Bundled part not found: {part} (function_id={function_id})")
+            raise SystemExit(
+                f"Bundled part not found: {part} (function_id={function_id})"
+            )
 
         raw = part.read_text(encoding="utf-8")
         if 'if __name__ == "__main__":' in raw or "if __name__ == '__main__':" in raw:
-            raise SystemExit(f'__main__ block is not allowed in bundled functions: {part}')
+            raise SystemExit(
+                f"__main__ block is not allowed in bundled functions: {part}"
+            )
 
         rel = part.relative_to(src_dir.parent)
         with out_file.open("a", encoding="utf-8") as f:
@@ -140,8 +152,12 @@ def bundle_function(*, src_dir: Path, function_id: str, out_file: Path) -> None:
 
 def main() -> None:
     parser = argparse.ArgumentParser()
-    parser.add_argument("--src-dir", required=True, help="webui_functions_src/<function_id> directory")
-    parser.add_argument("--function-id", required=True, help="function id (directory name)")
+    parser.add_argument(
+        "--src-dir", required=True, help="webui_functions_src/<function_id> directory"
+    )
+    parser.add_argument(
+        "--function-id", required=True, help="function id (directory name)"
+    )
     parser.add_argument("--out-file", required=True, help="output .py path")
     args = parser.parse_args()
 
