@@ -1,10 +1,8 @@
 services:
   seed-functions:
-    # `open-webui` をフルビルドしている場合は `WEBUI_SEED_IMAGE=open-webui:local` を指定すると
-    # seed 側も同じイメージで実行できる.
-    image: ${WEBUI_SEED_IMAGE-ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main}}
-    depends_on:
-      - open-webui
+    # 既定はローカルでビルドした `open-webui:local` を利用する（GHCR から pull しない）.
+    # prebuilt image を使う場合は `WEBUI_SEED_IMAGE=ghcr.io/open-webui/open-webui:<tag>` を指定する.
+    image: ${WEBUI_SEED_IMAGE-open-webui:local}
     env_file:
       - api_key.env
     environment:

@@ -19,14 +19,23 @@ API key は Open WebUI の `POST /api/v1/auths/api_key` で発行できます（
 
 ```
 docker compose -f docker-compose.yaml up -d
-docker compose -f docker-compose.yaml -f docker-compose.seed-functions.yaml run --rm seed-functions
+WEBUI_SEED_IMAGE=ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main} \
+  docker compose -f docker-compose.yaml -f docker-compose.seed-functions.yaml run --rm seed-functions
 ```
 
 Ollama を使わない場合は, `docker-compose.webui-only.yaml` を利用できます.
 
 ```
 docker compose -f docker-compose.webui-only.yaml up -d
-docker compose -f docker-compose.webui-only.yaml -f docker-compose.seed-functions.yaml run --rm seed-functions
+WEBUI_SEED_IMAGE=ghcr.io/open-webui/open-webui:${WEBUI_DOCKER_TAG-main} \
+  docker compose -f docker-compose.webui-only.yaml -f docker-compose.seed-functions.yaml run --rm seed-functions
+```
+
+ローカルビルド（`open-webui:local`）で検証する場合は, `docker-compose.full-build.webui-only.yaml` を利用できます.
+
+```
+docker compose -f docker-compose.full-build.webui-only.yaml up -d --build open-webui
+docker compose -f docker-compose.full-build.webui-only.yaml -f docker-compose.seed-functions.yaml run --rm seed-functions
 ```
 
 ## 注意
