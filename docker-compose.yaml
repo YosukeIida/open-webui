@@ -20,6 +20,8 @@ services:
       - ollama
     ports:
       - ${OPEN_WEBUI_PORT-3000}:8080
+    env_file:
+      - api_key.env
     environment:
       - 'OLLAMA_BASE_URL=http://ollama:11434'
       - 'WEBUI_SECRET_KEY='

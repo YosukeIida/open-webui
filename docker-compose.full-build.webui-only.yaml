@@ -1,0 +1,29 @@
+services:
+  open-webui:
+    # `Dockerfile` を用いたフルビルド（フロントエンド build 含む）で検証するための構成.
+    # `docker-compose.webui-only.yaml` の prebuilt image では更新できない Python 依存（例: anthropic SDK）を更新する用途.
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        # フロントエンド build の OOM 回避（Docker Desktop のメモリ割当も併せて調整推奨）.
+        NODE_MAX_OLD_SPACE_SIZE: ${NODE_MAX_OLD_SPACE_SIZE-4096}
+    image: open-webui:local
+    container_name: open-webui
+    volumes:
+      - open-webui:/app/backend/data
+      - ./backend/open_webui/functions.py:/app/backend/open_webui/functions.py:ro
+    ports:
+      - ${OPEN_WEBUI_PORT-3000}:8080
+    env_file:
+      - api_key.env
+    environment:
+      - 'OLLAMA_BASE_URL='
+      - 'WEBUI_SECRET_KEY='
+      - 'ENABLE_OLLAMA_API=false'
+    extra_hosts:
+      - host.docker.internal:host-gateway
+    restart: unless-stopped
+
+volumes:
+  open-webui: {}
